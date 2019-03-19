@@ -10,17 +10,24 @@ import java.util.*;
 
 class node
 {
-    node parents[];
-    node next;
+    List<node> parents;
+    // node next;
     String filestructure;
     Boolean isBranchHead;
     String nodeName = "";
+    String commitMessage ="";
     public node(String filestructure, Boolean isBranchHead, String nodeName)
     {
         this.filestructure = filestructure;
         // parents = new node[2];
         this.isBranchHead = isBranchHead;
         this.nodeName = nodeName;
+        parents = new ArrayList<node>();
+    }
+    
+    public void assignParent(node x)
+    {
+        this.parents.add(x);
     }
     
     public String toString()
@@ -36,7 +43,7 @@ class git
     node head;
     List<node> Branches = new ArrayList<node>();
     
-    
+    String stagedArea = "";
     
     public void checkout(String BranchId)
     {
@@ -60,14 +67,56 @@ class git
     {
         Branches.add(new node("f1:sdsd,f2:sds",true,BranchId));
     }
+    
+    public void stage(String xyz)
+    {
+        this.stagedArea = xyz;
+    }
+    
+    public void commit(String commitMessage)
+    {
+        node commitNode = new node(this.stagedArea,false,"commit" + Math.random());
+        // System.out.println(commitNode);
+        commitNode.assignParent(this.head);
+        this.head = commitNode;
+        this.stagedArea = "";
+    }
+    
+    public void printAllNodes()
+    {
+        this.print(this.head);
+    }
+    
+    public void printHeadsParents()
+    {
+        System.out.println(this.head.parents);
+    }
+    public void print(node x)
+    {
+        if(x!=null)
+        {for(int i=0;i< x.parents.size();i++)
+        {
+            print(x.parents.get(i));
+        }
+        
+        System.out.println(x);
+        }
+    }
 }
 
 public class Main
 {
-	public static void main(String[] args) {
-		System.out.println("Hello World");
-		git test = new git();
-		test.createBranch("myfirstBranch");
-		System.out.println(test.findNode("myfirstBranch"));
-	}
+    public static void main(String[] args) {
+        System.out.println("Hello World");
+        git test = new git();
+//      test.createBranch("myfirstBranch");
+//      System.out.println(test.findNode("myfirstBranch"));
+        test.stage("new file created");
+        test.commit("adding a new commit");
+        test.stage("new file created2");
+        test.commit("adding a new commit2");
+        // test.printHeadsParents();
+        test.printAllNodes();
+        
+    }
 }
